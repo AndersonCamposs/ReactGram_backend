@@ -20,7 +20,7 @@ app.use(cors({credentials: true, origin: "http://localhost:5173"}));
 app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
 
 // DATABASE CONFIG
-require('./config/db.js');
+require('./config/db')();
 
 // ROUTES 
 const router = require('./routes/Router');
