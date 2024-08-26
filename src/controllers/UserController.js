@@ -105,7 +105,7 @@ const update = async (req, res) => {
 
   try {
     const user = await User.findById(
-      new mongoose.Types.ObjectId(req.user._id)
+      new mongoose.Types.ObjectId(reqUser._id)
     ).select("-password");
 
     if (name) {
@@ -131,6 +131,7 @@ const update = async (req, res) => {
   }
 };
 
+// GET USER BY ID
 const getUserById = async (req, res) => {
   const { id } = req.params;
 
