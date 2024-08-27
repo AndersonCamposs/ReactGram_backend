@@ -104,9 +104,7 @@ const update = async (req, res) => {
   const reqUser = req.user;
 
   try {
-    const user = await User.findById(
-      new mongoose.Types.ObjectId(reqUser._id)
-    ).select("-password");
+    const user = await User.findById(reqUser._id).select("-password");
 
     if (name) {
       user.name = name;
@@ -136,9 +134,7 @@ const getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await User.findById(new mongoose.Types.ObjectId(id)).select(
-      "-password"
-    );
+    const user = await User.findById(id).select("-password");
 
     // CHECK IF USER EXISTS
     if (!user) {

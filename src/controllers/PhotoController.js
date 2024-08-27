@@ -37,7 +37,7 @@ const deletePhoto = async (req, res) => {
   const { id } = req.params;
   const reqUser = req.user;
   try {
-    const photo = await Photo.findById(new mongoose.Types.ObjectId(id));
+    const photo = await Photo.findById(id);
 
     // CHECK IF PHOTO EXISTS
     if (!photo) {
@@ -97,7 +97,7 @@ const getPhotoById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const photo = await Photo.findById(new mongoose.Types.ObjectId(id));
+    const photo = await Photo.findById(id);
 
     if (!photo) {
       return res.status(404).json({ errors: ["Foto não encontrada."] });
@@ -111,10 +111,49 @@ const getPhotoById = async (req, res) => {
   }
 };
 
+// UPDATE A PHOTO
+const updatePhoto = async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+
+  const reqUser = req.user;
+
+  try {
+    const photo = await Photo.findById(id);
+
+    // CHECK IF PHOTO EXISTS
+    if (!photo) {
+      return res.status(404).json({ errors: ["Foto não encontrada."] });
+    }
+
+    // CHECK IF PHOTO BELONGS TO USER
+    if (!photo.userId.equals(reqUser._id)) {
+      return res
+        .status(422)
+        .json({ errors: ["Houve um erro. Tente novamente mais tarde."] });
+    }
+
+    if (title) {
+      photo.title = title;
+    }
+
+    await photo.save();
+
+    return res
+      .status(200)
+      .json({ photo, message: "Foto atualizada com sucesso." });
+  } catch (error) {
+    return res
+      .status(422)
+      .json({ errors: ["Houve um erro. Tente novamente mais tarde."] });
+  }
+};
+
 module.exports = {
   insertPhoto,
   deletePhoto,
   getAllPhotos,
   getUserPhotos,
   getPhotoById,
+  updatePhoto,
 };
