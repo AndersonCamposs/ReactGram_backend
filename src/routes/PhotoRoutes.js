@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 //CONTROLLER
 const {
   insertPhoto,
@@ -8,15 +9,20 @@ const {
   getUserPhotos,
   getPhotoById,
   updatePhoto,
+  likePhoto,
+  commentPhoto,
 } = require("../controllers/PhotoController");
+
 // MIDDLEWARES
 const {
   photoInsertValidation,
   photoUpdateValidation,
+  commentValidation,
 } = require("../middlewares/photoValidation");
 const authGuard = require("../middlewares/authGuard");
 const validate = require("../middlewares/handleValidation");
 const { imageUpload } = require("../middlewares/imageUpload");
+
 // ROUTES
 router.post(
   "/",
@@ -31,5 +37,13 @@ router.get("/", authGuard, getAllPhotos);
 router.get("/user/:id", authGuard, getUserPhotos);
 router.get("/:id", authGuard, getPhotoById);
 router.put("/:id", authGuard, photoUpdateValidation(), validate, updatePhoto);
+router.put("/like/:id", authGuard, likePhoto);
+router.put(
+  "/comment/:id",
+  authGuard,
+  commentValidation(),
+  validate,
+  commentPhoto
+);
 
 module.exports = router;

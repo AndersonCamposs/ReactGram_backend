@@ -149,6 +149,82 @@ const updatePhoto = async (req, res) => {
   }
 };
 
+// LIKE FUNCIONALITY
+const likePhoto = async (req, res) => {
+  const { id } = req.params;
+
+  const reqUser = req.user;
+  try {
+    const photo = await Photo.findById(id);
+    // CHECK IF PHOTO EXISTS
+    if (!photo) {
+      return res.status(404).json({ errors: "Foto não encontrada." });
+    }
+
+    // CHECK IF USER ALREADY LIKED THE PHOTO
+    if (photo.likes.includes(reqUser._id)) {
+      return res
+        .status(422)
+        .json({ errors: "Houve um erro. Tente novamente mais tarde." });
+    }
+
+    // PUT USER ID IN LIKES ARRAY
+    photo.likes.push(reqUser._id);
+    await photo.save();
+
+    return res.status(200).json({
+      photoId: id,
+      userId: req.user._id,
+      message: "A foto foi curtida.",
+    });
+  } catch (error) {
+    return res
+      .status(422)
+      .json({ errors: "Houve um erro. Tente novamente mais tarde." });
+  }
+};
+
+// COMMENT FUNCTIONALITY
+const commentPhoto = async (req, res) => {
+  const { id } = req.params;
+
+  const { comment } = req.body;
+
+  const reqUser = req.user;
+
+  try {
+    const user = await User.findById(reqUser._id);
+
+    const photo = await Photo.findById(id);
+
+    // CHECK IF PHOTO EXISTS
+    if (!photo) {
+      return res.status(404).json({ errors: "Foto não encontrada." });
+    }
+
+    // PUT COMMENT IN THE ARRAY COMMENTS
+    const userComment = {
+      comment,
+      userName: user.name,
+      userImage: user.profileImage,
+      userId: user._id,
+    };
+
+    photo.comments.push(userComment);
+
+    await photo.save();
+
+    return res.status(200).json({
+      comment: userComment,
+      message: "O comentário foi adiconado com sucesso.",
+    });
+  } catch (error) {
+    return res
+      .status(422)
+      .json({ errors: "Houve um erro. Tente novamente mais tarde." });
+  }
+};
+
 module.exports = {
   insertPhoto,
   deletePhoto,
@@ -156,4 +232,6 @@ module.exports = {
   getUserPhotos,
   getPhotoById,
   updatePhoto,
+  likePhoto,
+  commentPhoto,
 };
