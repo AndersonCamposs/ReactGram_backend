@@ -49,7 +49,7 @@ const userUpdateValidation = () => {
     body("password")
       .optional()
       .isLength({ min: 6 })
-      .withMessage("A senha deve ter no m[inimo 6 caracteres"),
+      .withMessage("A senha deve ter no mínimo 6 caracteres"),
   ];
 };
 
