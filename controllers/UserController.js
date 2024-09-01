@@ -94,10 +94,9 @@ const getCurrentUser = async (req, res) => {
 // UPDATE AN USER
 const update = async (req, res) => {
   const { name, password, bio } = req.body;
-
   let profileImage = null;
 
-  if (req.profileImage) {
+  if (req.file) {
     profileImage = req.file.filename;
   }
 
@@ -120,6 +119,8 @@ const update = async (req, res) => {
 
     if (bio) {
       user.bio = bio;
+    } else {
+      user.bio = "";
     }
 
     await user.save();
